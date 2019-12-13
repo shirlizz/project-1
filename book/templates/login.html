@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% from "_render_field.html" import render_field %}
+
+{% block title %}Login{% endblock %}
+{% block body %}
+  {{ super() }}
+  <div class="container">
+    <div class="simple-login">
+      <div class="row">
+        <div class="col-lg-6 col-md-12 offset-lg-3 ">
+          {% with messages = get_flashed_messages() %}
+          {% if messages %}
+          {% for message in messages %}
+          <div class="alert alert-primary alert-dismissible fade show" role="alert">
+            <span>{{ message }}</span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          {% endfor %}
+          {% endif %}
+          {% endwith %}
+          <div class="card">
+            <article class="card-body">
+              <a href="" class="float-right btn btn-outline-primary">Sign up</a>
+              <h4 class="card-title mb-4 mt-1">Sign in</h4>
+              <form action="" method="post" novalidate>
+                {{ form.csrf_token }}
+                {{render_field(form.email, placeholder=form.email.label.text)}}
+                {{render_field(form.password, placeholder=form.password.label.text)}}
+                <div class="form-group">
+                  <div class="checkbox">
+                    <label> {{ form.remember_me() }} {{form.remember_me.label.text}} </label>
+                  </div> <!-- checkbox .// -->
+                </div> <!-- form-group// -->
+                <div class="form-group">
+                  {{form.submit(class="btn btn-primary btn-block")}}
+                </div> <!-- form-group// -->
+              </form>
+            </article>
+          </div> <!-- card.// -->
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

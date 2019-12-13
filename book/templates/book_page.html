@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Book_Page{% endblock %}
+{% block body %}
+  {{ super() }}
+  <div class="container">
+    <form action="/list" method="POST">
+      <div class="input-group" style="margin-top: 1cm">
+        <div class="input-group-btn search-panel">
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            <span id="search_concept">Filter by</span> <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="#isbn">ISBN</a></li>
+            <li><a href="#title">TITLE</a></li>
+            <li><a href="#author">AUTHOR</a></li>
+          </ul>
+        </div>
+        <input type="text" name="search_param" value={{prm}} id="search_param">
+        <input type="text" class="form-control" name="busqueda" placeholder="Search term...">
+        <span class="input-group-btn">
+          <button class="btn btn-secondary" type="submit">
+            <i class="fa fa-search"></i>
+          </button>
+        </span>
+      </div>
+    </form>
+
+    {%with messages = get_flashed_messages() %}
+    {%if messages%}
+    {%for message in messages %}
+    <p>{{message}}</p>
+    {%endfor%}
+    {%endif%}
+    {%endwith%}
+    {% if datos%}
+
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">ISBN</th>
+            <th scope="col">TITLE</th>
+            <th scope="col">AUTHOR</th>
+            <th scope="col">DETAILS</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i, dato in datos %}
+          <tr>
+            <th scope="row">{{i+1}}</th>
+            <td>{{dato.1}}</td>
+            <td>{{dato.2}}</td>
+            <td>{{dato.3}}</td>
+            <td>
+              <a href="/details/{{dato.0}}" class="btn btn-success">Details</a>
+            </td>
+          </tr>
+          {%endfor%}
+        </tbody>
+      </table>
+    </div>
+    {%endif%}
+  </div>
+  
+  <script>
+    $(document).ready(function (e) {
+      $('.search-panel .dropdown-menu').find('a').click(function (e) {
+        e.preventDefault();
+        var param = $(this).attr("href").replace("#", "");
+        var concept = $(this).text();
+        $('.search-panel span#search_concept').text(concept);
+        $('.input-group #search_param').val(param);
+      });
+    });
+  </script>
+
+{% endblock %}

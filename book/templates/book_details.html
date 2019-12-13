@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}Book_Page{% endblock %}
+{% block body %}
+  {{ super() }}
+  <div class="container">
+      <input id="search" type="hidden" name="prodId" value={{isbn.1}}>
+      <div class="card-group">
+          <div class="card col-xl-3" id="cardBook">
+            <!-- <img class="card-img-top" src="..." alt="Card image cap"> -->
+          </div>
+          <div class="card col-xl-9">
+            <div class="card-body">
+              <h5 class="card-title" id="title-book" >Card title</h5>
+              <h6 class="card-subtitle mb-2" id="authors">AUTHOR</h6>
+              <p class="card-text" id="description" >This card has supporting text below as a natural lead-in to additional content.</p>
+              <!-- <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p> -->
+              <div class="link d-flex" id="linkBook">
+                  <!-- <a href="#" class="card-link text-warning">Read More</a> -->
+                </div>
+            </div>
+          </div>
+        </div>
+  </div>
+  <div class="container">
+  
+    <div class="table-responsive-md">
+      
+  
+      {%if do_review%}
+      <a href="/review/{{idb}}" class="btn btn-primary">Hacer Review</a>
+      {%else%}
+      <table class="table table-bordered">
+        <tbody>
+          {% for dato in datos2 %}
+          <tr class="d-flex">
+            <th class="col-2" scope="row">RATING:</th>
+            <td class="col-10" id="vRaiting">
+                {%for i in range(0, 5)%} 
+                  {% if i >=  dato.3 %}
+                    <i class="fa fa-star" style="font-size:48px;color:gray"></i>
+                  {% else %}
+                    <i class="fa fa-star" style="font-size:48px;color:yellow"></i>
+                  {% endif %}
+                {%endfor%} 
+            </td>
+          </tr>
+          <tr class="d-flex">
+            <th class="col-2" scope="row">OPINION:</th>
+            <td class="col-10">{{dato.4}}</td>
+          </tr>
+          {%endfor%}
+        </tbody>
+      </table>
+      {%endif%}
+    </div>
+  </div>
+  
+  <script>
+    $(document).ready(function () {
+      var search=$("#search").val();
+      
+      $.getJSON("https://www.googleapis.com/books/v1/volumes?q="+search,function (response) {
+        var linnkBook= $('<a href='+ response.items[0].volumeInfo.infoLink +'class="card-link text-warning">Read More</a>');
+        var imagen = $('<img class="card-img-top">');
+        var url = response.items[0].volumeInfo.imageLinks.thumbnail;
+        
+        $('#title-book').html(response.items[0].volumeInfo.title);
+        $('#description').html(response.items[0].volumeInfo.description);
+        $('#authors').html(response.items[0].volumeInfo.authors[0]);
+        imagen.attr('src',url);
+        imagen.appendTo("#cardBook");
+        linnkBook.appendTo('#linkBook');
+      });
+    })
+  </script>
+  <div class="container">
+    <table class="table" id="table-api">
+      <thead>
+        <tr>
+          <th>Google Api</th>
+          <th id="value-isbn">Details</th>
+        </tr>
+      </thead>
+      <tbody id="table-data">
+
+      </tbody>
+    </table>
+  </div>
+  <script>
+    var search=$("#search").val();
+    document.getElementById("value-isbn").innerHTML="isbn: "+search;
+    var temp="";
+    fetch("https://www.googleapis.com/books/v1/volumes?q="+search).then(
+      res=>{
+        res.json().then(
+          data=>{
+            for(const it in data.items[0].volumeInfo){
+              temp +="<tr>";
+              temp +=`<td>${it}</td>`;
+              temp +=`<td>${data.items[0].volumeInfo[it]}</td></tr>`;
+            }
+            document.getElementById("table-data").innerHTML=temp;
+          }
+        )
+      }
+    )
+  </script>
+{% endblock %}
